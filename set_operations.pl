@@ -1,16 +1,24 @@
-# CODE - 2 
+% --- Set Operations in Prolog ---
 
-% Union of two sets
-union([], L, L).
-union([H|T], L, R) :- member(H, L), union(T, L, R).
-union([H|T], L, [H|R]) :- \+ member(H, L), union(T, L, R).
+% Helper: Remove duplicates from a list to ensure set-like behavior
+remove_duplicates([], []).
+remove_duplicates([H|T], R) :- member(H, T), remove_duplicates(T, R).
+remove_duplicates([H|T], [H|R]) :- \+ member(H, T), remove_duplicates(T, R).
 
-% Intersection of two sets
-intersection([], _, []).
-intersection([H|T], L, [H|R]) :- member(H, L), intersection(T, L, R).
-intersection([H|T], L, R) :- \+ member(H, L), intersection(T, L, R).
+% --- Union of Two Sets ---
+% Returns a set containing all unique elements from both lists
+union_set(A, B, Union) :-
+    append(A, B, Temp),
+    remove_duplicates(Temp, Union).
 
-% Complement (Elements of First List not in Second)
-complement([], _, []).
-complement([H|T], L, [H|R]) :- \+ member(H, L), complement(T, L, R).
-complement([H|T], L, R) :- member(H, L), complement(T, L, R).
+% --- Intersection of Two Sets ---
+% Returns a set of elements common to both lists
+intersection_set([], _, []).
+intersection_set([H|T], B, [H|R]) :- member(H, B), intersection_set(T, B, R).
+intersection_set([H|T], B, R) :- \+ member(H, B), intersection_set(T, B, R).
+
+% --- Complement ---
+% Returns elements in A that are not in B
+complement_set([], _, []).
+complement_set([H|T], B, [H|R]) :- \+ member(H, B), complement_set(T, B, R).
+complement_set([H|T], B, R) :- member(H, B), complement_set(T, B, R).
